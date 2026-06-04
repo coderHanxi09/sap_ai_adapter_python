@@ -1,0 +1,31 @@
+{
+  "account": {
+    "id": "ACC-100234",
+    "name": "Alpine Sports Retail GmbH",
+    "type": "Customer",
+    "status": "Active",
+    "industry": "Retail",
+    "taxId": "DE123456789",
+    "website": "https://www.alpine-sports.example",
+    "phone": "+49-89-1234567",
+    "email": "info@alpine-sports.example",
+    "billingAddress": {
+      "street": "Hauptstraße 12",
+      "city": "München",
+      "postalCode": "80331",
+      "country": "DE"
+    },
+    "shippingAddress": {
+      "street": "Lagerstraße 5",
+      "city": "München",
+      "postalCode": "80999",
+      "country": "DE"
+    },
+    "primaryContact": {
+      "firstName": "Anna",
+      "lastName": "Meier",
+      "email": "anna.meier@alpine-sports.example",
+      "phone": "+49-89-9876543"
+    }
+  }
+}

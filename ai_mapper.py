@@ -1,100 +1,127 @@
 import os
 import json
 import re
-try:
-    import google.generativeai as genai
-    _HAS_GENAI = True
-except Exception:
-    genai = None
-    _HAS_GENAI = False
 from dotenv import load_dotenv
-from schemas import BusinessPartner
+from google import genai
+from schemas import BusinessPartnerRequestModel
 
-# Load environment variables
+# -------------------------
+# Load env
+# -------------------------
 load_dotenv()
 
-# Configure Gemini API key (only if SDK is available)
-if _HAS_GENAI:
-    genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
-    # Initialize model
-    model = genai.GenerativeModel("gemini-1.5-flash")
-else:
-    # Dummy model placeholder to allow imports in environments without the SDK.
-    class _DummyModel:
-        def generate_content(self, *args, **kwargs):
-            raise RuntimeError("google.generativeai SDK not available. Install it or mock 'model.generate_content' in tests.")
+client = genai.Client(
+    api_key=os.getenv("GEMINI_API_KEY")
+)
 
-    model = _DummyModel()
-
-
-# Schema registry (NOW using real Pydantic models)
+# -------------------------
+# Schema registry
+# -------------------------
 SCHEMA_REGISTRY = {
-    "BusinessPartner": BusinessPartner
+    "BusinessPartner": BusinessPartnerRequestModel
 }
 
-
-# Build structured prompt
+# -------------------------
+# Prompt builder (SAFE)
+# -------------------------
 def build_prompt(source: dict, schema_class):
+    schema_json = json.dumps(schema_class.model_json_schema(), indent=2)
+    source_json = json.dumps(source, indent=2)
 
-    schema_json = schema_class.model_json_schema()
-
-    return f"""
-You are an SAP S/4HANA enterprise data mapping engine.
+    prompt_template = """
+You are an SAP S/4HANA data mapping engine.
 
 TASK:
-Map source data into the target SAP JSON schema.
+Transform input business data into SAP S/4HANA-compatible OData JSON payloads.
 
-RULES:
-- Output ONLY valid JSON
-- No explanation
-- No markdown
-- Must match schema exactly
-- Do not add extra fields
-- Do not remove required fields
+STRICT OUTPUT RULES:
+- Output ONLY raw valid JSON
+- Do NOT use markdown
+- Do NOT wrap output in code fences
+- Do NOT include explanations or comments
+- Must be JSON.parse() compatible
+- Response must start with {{
+- Response must end with }}
+
+JSON RULES:
+- Never output null
+- Never output undefined
+- Omit unknown fields
+- Use [] for empty collections
+
+SAP S/4HANA RULES:
+- Follow schema exactly
+- Do not invent SAP customizing values
+- Navigation properties must always be arrays
 
 TARGET SCHEMA:
-{json.dumps(schema_json, indent=2)}
+{schema}
 
-SOURCE DATA:
-{json.dumps(source, indent=2)}
+SOURCE:
+{source}
 
 Return ONLY JSON.
 """
 
+    return prompt_template.format(
+        schema=schema_json,
+        source=source_json
+    ).strip()
 
-# Safe JSON parser
-def safe_parse(text: str):
-
-    text = re.sub(r"```.*?```", "", text, flags=re.S)
+# -------------------------
+# Robust JSON extractor
+# -------------------------
+def extract_json(text: str):
+    """
+    Extract first valid JSON object from LLM output safely
+    """
     text = text.strip()
 
-    return json.loads(text)
+    # remove markdown fences
+    text = re.sub(r"```(?:json)?", "", text)
+    text = text.replace("```", "").strip()
 
+    # find first JSON object
+    match = re.search(r"\{.*\}", text, re.S)
+    if not match:
+        raise ValueError("No JSON object found")
 
-# Main mapping function
+    json_str = match.group(0)
+    return json.loads(json_str)
+
+# -------------------------
+# Main mapping engine
+# -------------------------
 def map_to_sap(source: dict, target_schema: str):
-    schema_class = SCHEMA_REGISTRY.get(target_schema)
 
-    def _map_single(item: dict):
+    schema_class = SCHEMA_REGISTRY[target_schema]
+
+    def _map_single(item):
+
         prompt = build_prompt(item, schema_class)
-        response = model.generate_content(prompt)
+
+        response = client.models.generate_content(
+            model="gemini-2.5-flash",
+            contents=prompt
+        )
+
         text = response.text
+
         try:
-            result = safe_parse(text)
+            result = extract_json(text)
+
             validated = schema_class.model_validate(result)
+
             return validated.model_dump()
-        except Exception:
+
+        except Exception as e:
             return {
-                "error": "Invalid SAP mapping output",
+                "error": "Invalid output",
+                "exception": str(e),
                 "raw_output": text
             }
 
-    # Support lists of records by mapping each element
     if isinstance(source, list):
-        return [_map_single(item) for item in source]
+        return [_map_single(i) for i in source]
 
-    if isinstance(source, dict):
-        return _map_single(source)
-
-    # unsupported source type
-    raise TypeError("Source must be a dict or list of dicts")
+    return _map_single(source)

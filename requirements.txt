@@ -37,3 +37,5 @@ uritemplate==4.2.0
 urllib3==2.7.0
 uvicorn==0.48.0
 pytest==7.4.2
+pandas==2.3.3
+openpyxl==3.1.5

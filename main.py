@@ -1,9 +1,6 @@
 from fastapi import FastAPI, UploadFile, File
-import json
 from ai_mapper import map_to_sap
 from parser import parse_file
-from fastapi.responses import StreamingResponse
-import io
 
 
 app = FastAPI(title="SAP AI Adapter Service")
@@ -15,16 +12,7 @@ def health():
     return {"status": "running"}
 
 
-# JSON input endpoint
-@app.post("/map")
-def map_json(data: dict, target_schema: str = "BusinessPartner"):
-
-    result = map_to_sap(data, target_schema)
-
-    return {
-        "status": "success",
-        "mapped_result": result
-    }
+# NOTE: the `/map` endpoint was removed because it's not used by the CAP flow.
 
 
 # File upload endpoint (CSV / JSON / TXT)
@@ -37,11 +25,10 @@ async def upload_file(file: UploadFile = File(...), target_schema: str = "Busine
 
     result = map_to_sap(parsed_data, target_schema)
 
-    # return as downloadable JSON file
-    out = io.BytesIO()
-    out.write(json.dumps({"filename": file.filename, "mapped_result": result}, ensure_ascii=False, indent=2).encode())
-    out.seek(0)
-
-    return StreamingResponse(out, media_type="application/json", headers={
-        "Content-Disposition": f"attachment; filename=map_{file.filename}.json"
-    })
+    # return plain JSON so CAP can consume mapped data directly
+    return {
+        "status": "success",
+        "file_name": file.filename,
+        "target_schema": target_schema,
+        "mapped_result": result
+    }
