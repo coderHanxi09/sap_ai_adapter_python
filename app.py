@@ -1,4 +1,4 @@
-from fastapi import FastAPI, UploadFile, File, HTTPException
+from fastapi import FastAPI, UploadFile, File, HTTPException, Query
 from ai_mapper import map_to_sap
 from parser import parse_file
 
@@ -19,8 +19,14 @@ def health():
 @app.post("/upload")
 async def upload_file(
     file: UploadFile = File(...),
-    target_schema: str = "BusinessPartner"
+    target_schema: str = "BusinessPartner",
+    mode: str = Query("cap", description="cap | raw")
 ):
+    """
+    mode:
+    - cap → return {"value": ...} for SAP CAP/OData
+    - raw → return pure JSON (for debugging)
+    """
 
     try:
         # -----------------------
@@ -41,12 +47,25 @@ async def upload_file(
         # -----------------------
         result = map_to_sap(parsed_data, target_schema)
 
+        # -----------------------
+        # RESPONSE FORMAT LAYER
+        # -----------------------
+        if mode == "raw":
+            return {
+                "status": "success",
+                "file_name": file.filename,
+                "target_schema": target_schema,
+                "data": result
+            }
+
+        # CAP mode (default)
         return {
-            "value": result   # CAP-friendly format
+            "value": result
         }
 
     except Exception as e:
         return {
-            "error": str(e),
+            "status": "error",
+            "message": str(e),
             "file_name": file.filename
         }
