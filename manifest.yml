@@ -1,0 +1,9 @@
+---
+applications:
+  - name: sap-ai-adapter
+    memory: 512M
+    disk_quota: 1024M
+    random-route: true
+    buildpacks:
+      - python_buildpack
+    command: gunicorn app:app -w 2 -k uvicorn.workers.UvicornWorker 
