@@ -26,56 +26,75 @@ async def upload_file(
         description="generic | crm | salesforce"
     )
 ):
-    """
-    mode:
-    - cap → return {"value": ...} for SAP CAP/OData
-    - raw → return pure JSON (for debugging)
-
-    source_system:
-    - generic     → no extra mapping hints (default, backward compatible)
-    - crm         → legacy CRM/professor scenario, treated as generic
-    - salesforce  → enables Salesforce Account/Contact specific prompt
-    """
-
     try:
-        # -----------------------
         # File size safety check (10MB limit)
-        # -----------------------
         content = await file.read()
-
         if len(content) > 10 * 1024 * 1024:
             raise HTTPException(status_code=413, detail="File too large")
 
-        # -----------------------
         # Parse file
-        # -----------------------
-        parsed_data = parse_file(file.filename, content)
+        try:
+            parsed_data = parse_file(file.filename, content)
+            print(f"=== parsed_data type={type(parsed_data)} len={len(parsed_data) if hasattr(parsed_data, '__len__') else 'N/A'} ===")
+            print(parsed_data)
+        except Exception as e:
+            raise HTTPException(
+                status_code=422,
+                detail={
+                    "status": "FAILED",
+                    "errorType": "PARSE_ERROR",
+                    "message": f"Failed to parse file: {str(e)}",
+                    "fileName": file.filename
+                }
+            )
 
-        # -----------------------
         # Map to SAP
-        # -----------------------
-        result = map_to_sap(parsed_data, target_schema, source_system)
+        try:
+            result = map_to_sap(parsed_data, target_schema, source_system)
+            print(f"=== result type={type(result)} ===")
+            print(result)
+        except Exception as e:
+            raise HTTPException(
+                status_code=500,
+                detail={
+                    "status": "FAILED",
+                    "errorType": "MAPPING_ERROR",
+                    "message": f"AI mapping failed: {str(e)}",
+                    "fileName": file.filename
+                }
+            )
 
-        # -----------------------
-        # RESPONSE FORMAT LAYER
-        # -----------------------
+        # Calculate record count
+        record_count = len(result) if isinstance(result, list) else 1
+
         if mode == "raw":
             return {
-                "status": "success",
-                "file_name": file.filename,
-                "target_schema": target_schema,
-                "source_system": source_system,
-                "data": result
+                "status": "Completed",
+                "fileName": file.filename,
+                "recordCount": record_count,
+                "targetSchema": target_schema,
+                "sourceSystem": source_system,
+                "result": result
             }
 
-        # CAP mode (default) — keep response shape stable for CAP integration
+        # CAP mode (default)
         return {
+            "status": "Completed",
+            "fileName": file.filename,
+            "recordCount": record_count,
             "value": result
         }
 
+    except HTTPException:
+        raise  
+
     except Exception as e:
-        return {
-            "status": "error",
-            "message": str(e),
-            "file_name": file.filename
-        }
+        raise HTTPException(
+            status_code=500,
+            detail={
+                "status": "FAILED",
+                "errorType": "INTERNAL_ERROR",
+                "message": str(e),
+                "fileName": file.filename
+            }
+        )
