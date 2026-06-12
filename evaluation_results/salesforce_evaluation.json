@@ -1,0 +1,73 @@
+{
+  "cases": [
+    {
+      "case_name": "sf_account_standard",
+      "status": "ok",
+      "total_fields": 27,
+      "correct_fields": 27,
+      "accuracy": 1.0,
+      "mismatches": []
+    },
+    {
+      "case_name": "sf_contact_standard",
+      "status": "ok",
+      "total_fields": 29,
+      "correct_fields": 29,
+      "accuracy": 1.0,
+      "mismatches": []
+    },
+    {
+      "case_name": "sf_account_renamed",
+      "status": "ok",
+      "total_fields": 24,
+      "correct_fields": 24,
+      "accuracy": 1.0,
+      "mismatches": []
+    },
+    {
+      "case_name": "sf_account_uk_customer",
+      "status": "ok",
+      "total_fields": 13,
+      "correct_fields": 13,
+      "accuracy": 1.0,
+      "mismatches": []
+    },
+    {
+      "case_name": "sf_account_china_standard",
+      "status": "ok",
+      "total_fields": 13,
+      "correct_fields": 13,
+      "accuracy": 1.0,
+      "mismatches": []
+    },
+    {
+      "case_name": "sf_contact_japan",
+      "status": "ok",
+      "total_fields": 13,
+      "correct_fields": 13,
+      "accuracy": 1.0,
+      "mismatches": []
+    },
+    {
+      "case_name": "sf_account_partner",
+      "status": "ok",
+      "total_fields": 12,
+      "correct_fields": 12,
+      "accuracy": 1.0,
+      "mismatches": []
+    },
+    {
+      "case_name": "sf_account_sparse_renamed",
+      "status": "ok",
+      "total_fields": 8,
+      "correct_fields": 8,
+      "accuracy": 1.0,
+      "mismatches": []
+    }
+  ],
+  "overall": {
+    "total_fields": 139,
+    "correct_fields": 139,
+    "accuracy": 1.0
+  }
+}

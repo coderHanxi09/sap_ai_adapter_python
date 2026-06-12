@@ -1,0 +1,41 @@
+[
+  {
+    "BusinessPartner": {
+      "BusinessPartnerCategory": "2",
+      "OrganizationBPName1": "Shanghai Bright Electronics",
+      "SearchTerm1": null,
+      "Language": null,
+      "BusinessPartnerGrouping": null,
+      "CorrespondenceLanguage": null,
+      "Industry": "Electronics",
+      "WebsiteURL": "www.brightelec.cn",
+      "to_BusinessPartnerAddress": [
+        {
+          "Country": "CN",
+          "CityName": "Shanghai",
+          "PostalCode": "200001",
+          "StreetName": "200 Nanjing Road",
+          "HouseNumber": null,
+          "to_EmailAddress": null,
+          "to_PhoneNumber": [
+            {
+              "PhoneNumber": "+86-21-6600",
+              "IsDefaultPhoneNumber": true
+            }
+          ]
+        }
+      ],
+      "to_BusinessPartnerRole": [
+        {
+          "BusinessPartnerRole": "FLCU01"
+        }
+      ],
+      "to_BusinessPartnerTax": null,
+      "ExternalReference": {
+        "SourceSystem": "SALESFORCE",
+        "SourceCustomerID": "ACC-CN-01"
+      },
+      "ContactPerson": null
+    }
+  }
+]

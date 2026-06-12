@@ -20,12 +20,21 @@ def health():
 async def upload_file(
     file: UploadFile = File(...),
     target_schema: str = "BusinessPartner",
-    mode: str = Query("cap", description="cap | raw")
+    mode: str = Query("cap", description="cap | raw"),
+    source_system: str = Query(
+        "generic",
+        description="generic | crm | salesforce"
+    )
 ):
     """
     mode:
     - cap → return {"value": ...} for SAP CAP/OData
     - raw → return pure JSON (for debugging)
+
+    source_system:
+    - generic     → no extra mapping hints (default, backward compatible)
+    - crm         → legacy CRM/professor scenario, treated as generic
+    - salesforce  → enables Salesforce Account/Contact specific prompt
     """
 
     try:
@@ -45,7 +54,7 @@ async def upload_file(
         # -----------------------
         # Map to SAP
         # -----------------------
-        result = map_to_sap(parsed_data, target_schema)
+        result = map_to_sap(parsed_data, target_schema, source_system)
 
         # -----------------------
         # RESPONSE FORMAT LAYER
@@ -55,10 +64,11 @@ async def upload_file(
                 "status": "success",
                 "file_name": file.filename,
                 "target_schema": target_schema,
+                "source_system": source_system,
                 "data": result
             }
 
-        # CAP mode (default)
+        # CAP mode (default) — keep response shape stable for CAP integration
         return {
             "value": result
         }

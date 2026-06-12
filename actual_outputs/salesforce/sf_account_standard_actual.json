@@ -1,0 +1,80 @@
+[
+  {
+    "BusinessPartner": {
+      "BusinessPartnerCategory": "2",
+      "OrganizationBPName1": "Acme Corporation",
+      "SearchTerm1": null,
+      "Language": null,
+      "BusinessPartnerGrouping": null,
+      "CorrespondenceLanguage": null,
+      "Industry": "Manufacturing",
+      "WebsiteURL": "www.acme.com",
+      "to_BusinessPartnerAddress": [
+        {
+          "Country": "US",
+          "CityName": "New York",
+          "PostalCode": "10001",
+          "StreetName": "123 Main Street",
+          "HouseNumber": null,
+          "to_EmailAddress": null,
+          "to_PhoneNumber": [
+            {
+              "PhoneNumber": "+1-555-0100",
+              "IsDefaultPhoneNumber": true
+            }
+          ]
+        }
+      ],
+      "to_BusinessPartnerRole": [
+        {
+          "BusinessPartnerRole": "FLCU01"
+        }
+      ],
+      "to_BusinessPartnerTax": null,
+      "ExternalReference": {
+        "SourceSystem": "SALESFORCE",
+        "SourceCustomerID": "ACC-1001"
+      },
+      "ContactPerson": null
+    }
+  },
+  {
+    "BusinessPartner": {
+      "BusinessPartnerCategory": "2",
+      "OrganizationBPName1": "Beta GmbH",
+      "SearchTerm1": null,
+      "Language": null,
+      "BusinessPartnerGrouping": null,
+      "CorrespondenceLanguage": null,
+      "Industry": "Software",
+      "WebsiteURL": "www.beta.de",
+      "to_BusinessPartnerAddress": [
+        {
+          "Country": "DE",
+          "CityName": "Munich",
+          "PostalCode": "80331",
+          "StreetName": "Hauptstrasse",
+          "HouseNumber": "5",
+          "to_EmailAddress": null,
+          "to_PhoneNumber": [
+            {
+              "PhoneNumber": "+49-89-1234",
+              "IsDefaultPhoneNumber": true
+            }
+          ]
+        }
+      ],
+      "to_BusinessPartnerRole": [
+        {
+          "BusinessPartnerRole": "FLCU01"
+        }
+      ],
+      "to_BusinessPartnerTax": null,
+      "ExternalReference": {
+        "SourceSystem": "SALESFORCE",
+        "SourceCustomerID": "ACC-1002"
+      },
+      "ContactPerson": null
+    }
+  }
+]

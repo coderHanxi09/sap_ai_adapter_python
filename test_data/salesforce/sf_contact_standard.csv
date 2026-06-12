@@ -1,0 +1,3 @@
+Id,AccountId,FirstName,LastName,Email,Phone,MailingStreet,MailingCity,MailingPostalCode,MailingCountry
+003A000001,001A000001,John,Smith,john.smith@acme.com,+1-555-0101,123 Main Street,New York,10001,United States
+003A000002,001A000002,Anna,Müller,anna.mueller@beta.de,+49-89-5678,Hauptstrasse 5,Munich,80331,Germany

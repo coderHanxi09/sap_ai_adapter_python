@@ -1,0 +1,61 @@
+[
+  {
+    "BusinessPartner": {
+      "BusinessPartnerCategory": "2",
+      "OrganizationBPName1": "Acme Corporation",
+      "Industry": "Manufacturing",
+      "WebsiteURL": "www.acme.com",
+      "to_BusinessPartnerAddress": [
+        {
+          "Country": "US",
+          "CityName": "New York",
+          "PostalCode": "10001",
+          "StreetName": "123 Main Street",
+          "to_PhoneNumber": [
+            {
+              "PhoneNumber": "+1-555-0100",
+              "IsDefaultPhoneNumber": true
+            }
+          ]
+        }
+      ],
+      "to_BusinessPartnerRole": [
+        { "BusinessPartnerRole": "FLCU01" }
+      ],
+      "ExternalReference": {
+        "SourceSystem": "SALESFORCE",
+        "SourceCustomerID": "ACC-1001"
+      }
+    }
+  },
+  {
+    "BusinessPartner": {
+      "BusinessPartnerCategory": "2",
+      "OrganizationBPName1": "Beta GmbH",
+      "Industry": "Software",
+      "WebsiteURL": "www.beta.de",
+      "to_BusinessPartnerAddress": [
+        {
+          "Country": "DE",
+          "CityName": "Munich",
+          "PostalCode": "80331",
+          "StreetName": "Hauptstrasse",
+          "HouseNumber": "5",
+          "to_PhoneNumber": [
+            {
+              "PhoneNumber": "+49-89-1234",
+              "IsDefaultPhoneNumber": true
+            }
+          ]
+        }
+      ],
+      "to_BusinessPartnerRole": [
+        { "BusinessPartnerRole": "FLCU01" }
+      ],
+      "ExternalReference": {
+        "SourceSystem": "SALESFORCE",
+        "SourceCustomerID": "ACC-1002"
+      }
+    }
+  }
+]

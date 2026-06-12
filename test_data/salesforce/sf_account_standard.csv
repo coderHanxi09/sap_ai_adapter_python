@@ -1,0 +1,3 @@
+Id,AccountNumber,Name,Type,Industry,Phone,Website,BillingStreet,BillingCity,BillingPostalCode,BillingCountry
+001A000001,ACC-1001,Acme Corporation,Customer,Manufacturing,+1-555-0100,www.acme.com,123 Main Street,New York,10001,United States
+001A000002,ACC-1002,Beta GmbH,Customer,Software,+49-89-1234,www.beta.de,Hauptstrasse 5,Munich,80331,Germany

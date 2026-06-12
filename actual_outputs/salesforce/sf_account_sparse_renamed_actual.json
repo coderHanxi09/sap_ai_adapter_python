@@ -1,0 +1,32 @@
+[
+  {
+    "BusinessPartner": {
+      "BusinessPartnerCategory": "2",
+      "OrganizationBPName1": "Minimal Supplies Co",
+      "SearchTerm1": null,
+      "Language": null,
+      "BusinessPartnerGrouping": null,
+      "CorrespondenceLanguage": null,
+      "Industry": null,
+      "WebsiteURL": null,
+      "to_BusinessPartnerAddress": [
+        {
+          "Country": "GB",
+          "CityName": "Birmingham",
+          "PostalCode": "B1 1AA",
+          "StreetName": "42 Industrial Park Road",
+          "HouseNumber": null,
+          "to_EmailAddress": null,
+          "to_PhoneNumber": null
+        }
+      ],
+      "to_BusinessPartnerRole": null,
+      "to_BusinessPartnerTax": null,
+      "ExternalReference": {
+        "SourceSystem": "SALESFORCE",
+        "SourceCustomerID": "C-9901"
+      },
+      "ContactPerson": null
+    }
+  }
+]

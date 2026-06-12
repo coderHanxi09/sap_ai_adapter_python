@@ -1,0 +1,20 @@
+[
+  {
+    "BusinessPartner": {
+      "BusinessPartnerCategory": "2",
+      "OrganizationBPName1": "Minimal Supplies Co",
+      "to_BusinessPartnerAddress": [
+        {
+          "Country": "GB",
+          "CityName": "Birmingham",
+          "PostalCode": "B1 1AA",
+          "StreetName": "42 Industrial Park Road"
+        }
+      ],
+      "ExternalReference": {
+        "SourceSystem": "SALESFORCE",
+        "SourceCustomerID": "C-9901"
+      }
+    }
+  }
+]

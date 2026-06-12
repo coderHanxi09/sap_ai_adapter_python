@@ -1,0 +1,3 @@
+sf_id,client_no,company_name,business_area,tel,homepage,invoice_address,city,zip,nation
+001X001,C-7788,Northwind Traders,Wholesale,+44-20-1234,www.northwind.co.uk,"10 Downing Street",London,SW1A 2AA,UK
+001X002,C-8899,Dragon Tech Ltd,Technology,+86-21-5555,www.dragontech.cn,"88 Century Avenue",Shanghai,200120,China

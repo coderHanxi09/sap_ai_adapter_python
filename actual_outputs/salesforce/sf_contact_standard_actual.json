@@ -1,0 +1,92 @@
+[
+  {
+    "BusinessPartner": {
+      "BusinessPartnerCategory": "1",
+      "OrganizationBPName1": null,
+      "SearchTerm1": null,
+      "Language": null,
+      "BusinessPartnerGrouping": null,
+      "CorrespondenceLanguage": null,
+      "Industry": null,
+      "WebsiteURL": null,
+      "to_BusinessPartnerAddress": [
+        {
+          "Country": "US",
+          "CityName": "New York",
+          "PostalCode": "10001",
+          "StreetName": "123 Main Street",
+          "HouseNumber": null,
+          "to_EmailAddress": [
+            {
+              "EmailAddress": "john.smith@acme.com",
+              "IsDefaultEmailAddress": true
+            }
+          ],
+          "to_PhoneNumber": [
+            {
+              "PhoneNumber": "+1-555-0101",
+              "IsDefaultPhoneNumber": true
+            }
+          ]
+        }
+      ],
+      "to_BusinessPartnerRole": null,
+      "to_BusinessPartnerTax": null,
+      "ExternalReference": {
+        "SourceSystem": "SALESFORCE",
+        "SourceCustomerID": null
+      },
+      "ContactPerson": {
+        "FirstName": "John",
+        "LastName": "Smith",
+        "EmailAddress": "john.smith@acme.com",
+        "PhoneNumber": "+1-555-0101"
+      }
+    }
+  },
+  {
+    "BusinessPartner": {
+      "BusinessPartnerCategory": "1",
+      "OrganizationBPName1": null,
+      "SearchTerm1": null,
+      "Language": null,
+      "BusinessPartnerGrouping": null,
+      "CorrespondenceLanguage": null,
+      "Industry": null,
+      "WebsiteURL": null,
+      "to_BusinessPartnerAddress": [
+        {
+          "Country": "DE",
+          "CityName": "Munich",
+          "PostalCode": "80331",
+          "StreetName": "Hauptstrasse",
+          "HouseNumber": "5",
+          "to_EmailAddress": [
+            {
+              "EmailAddress": "anna.mueller@beta.de",
+              "IsDefaultEmailAddress": true
+            }
+          ],
+          "to_PhoneNumber": [
+            {
+              "PhoneNumber": "+49-89-5678",
+              "IsDefaultPhoneNumber": true
+            }
+          ]
+        }
+      ],
+      "to_BusinessPartnerRole": null,
+      "to_BusinessPartnerTax": null,
+      "ExternalReference": {
+        "SourceSystem": "SALESFORCE",
+        "SourceCustomerID": null
+      },
+      "ContactPerson": {
+        "FirstName": "Anna",
+        "LastName": "Müller",
+        "EmailAddress": "anna.mueller@beta.de",
+        "PhoneNumber": "+49-89-5678"
+      }
+    }
+  }
+]

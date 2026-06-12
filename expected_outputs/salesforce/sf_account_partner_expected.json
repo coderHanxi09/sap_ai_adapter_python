@@ -1,0 +1,28 @@
+[
+  {
+    "BusinessPartner": {
+      "BusinessPartnerCategory": "2",
+      "OrganizationBPName1": "Global Alliance Partners",
+      "Industry": "Consulting",
+      "WebsiteURL": "www.globalalliance.com",
+      "to_BusinessPartnerAddress": [
+        {
+          "Country": "US",
+          "CityName": "San Francisco",
+          "PostalCode": "94105",
+          "StreetName": "500 Market Street",
+          "to_PhoneNumber": [
+            {
+              "PhoneNumber": "+1-415-9000",
+              "IsDefaultPhoneNumber": true
+            }
+          ]
+        }
+      ],
+      "ExternalReference": {
+        "SourceSystem": "SALESFORCE",
+        "SourceCustomerID": "PART-9001"
+      }
+    }
+  }
+]

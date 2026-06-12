@@ -1,0 +1,72 @@
+[
+  {
+    "BusinessPartner": {
+      "BusinessPartnerCategory": "2",
+      "OrganizationBPName1": "Northwind Traders",
+      "SearchTerm1": null,
+      "Language": null,
+      "BusinessPartnerGrouping": null,
+      "CorrespondenceLanguage": null,
+      "Industry": "Wholesale",
+      "WebsiteURL": "www.northwind.co.uk",
+      "to_BusinessPartnerAddress": [
+        {
+          "Country": "GB",
+          "CityName": "London",
+          "PostalCode": "SW1A 2AA",
+          "StreetName": "10 Downing Street",
+          "HouseNumber": null,
+          "to_EmailAddress": null,
+          "to_PhoneNumber": [
+            {
+              "PhoneNumber": "+44-20-1234",
+              "IsDefaultPhoneNumber": true
+            }
+          ]
+        }
+      ],
+      "to_BusinessPartnerRole": null,
+      "to_BusinessPartnerTax": null,
+      "ExternalReference": {
+        "SourceSystem": "SALESFORCE",
+        "SourceCustomerID": "C-7788"
+      },
+      "ContactPerson": null
+    }
+  },
+  {
+    "BusinessPartner": {
+      "BusinessPartnerCategory": "2",
+      "OrganizationBPName1": "Dragon Tech Ltd",
+      "SearchTerm1": null,
+      "Language": null,
+      "BusinessPartnerGrouping": null,
+      "CorrespondenceLanguage": null,
+      "Industry": "Technology",
+      "WebsiteURL": "www.dragontech.cn",
+      "to_BusinessPartnerAddress": [
+        {
+          "Country": "CN",
+          "CityName": "Shanghai",
+          "PostalCode": "200120",
+          "StreetName": "88 Century Avenue",
+          "HouseNumber": null,
+          "to_EmailAddress": null,
+          "to_PhoneNumber": [
+            {
+              "PhoneNumber": "+86-21-5555",
+              "IsDefaultPhoneNumber": true
+            }
+          ]
+        }
+      ],
+      "to_BusinessPartnerRole": [],
+      "to_BusinessPartnerTax": null,
+      "ExternalReference": {
+        "SourceSystem": "SALESFORCE",
+        "SourceCustomerID": "C-8899"
+      },
+      "ContactPerson": null
+    }
+  }
+]

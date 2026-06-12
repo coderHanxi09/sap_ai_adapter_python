@@ -1,0 +1,35 @@
+[
+  {
+    "BusinessPartner": {
+      "BusinessPartnerCategory": "1",
+      "to_BusinessPartnerAddress": [
+        {
+          "CityName": "Tokyo",
+          "PostalCode": "100-0005",
+          "StreetName": "1-1-1 Marunouchi",
+          "to_EmailAddress": [
+            {
+              "EmailAddress": "yuki.tanaka@tokyo-tech.jp",
+              "IsDefaultEmailAddress": true
+            }
+          ],
+          "to_PhoneNumber": [
+            {
+              "PhoneNumber": "+81-3-5555-0100",
+              "IsDefaultPhoneNumber": true
+            }
+          ]
+        }
+      ],
+      "ExternalReference": {
+        "SourceSystem": "SALESFORCE"
+      },
+      "ContactPerson": {
+        "FirstName": "Yuki",
+        "LastName": "Tanaka",
+        "EmailAddress": "yuki.tanaka@tokyo-tech.jp",
+        "PhoneNumber": "+81-3-5555-0100"
+      }
+    }
+  }
+]

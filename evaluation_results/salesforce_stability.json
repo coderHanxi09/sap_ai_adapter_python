@@ -1,0 +1,44 @@
+{
+  "input_file": "/Users/avawang/salesforce_adapter/sap_ai_adapter_python/test_data/salesforce/sf_account_renamed.csv",
+  "num_runs_target": 8,
+  "completed_runs": 8,
+  "run_indices": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8
+  ],
+  "unique_outputs": 8,
+  "fully_identical": false,
+  "row_field_diffs": [
+    {
+      "row_index": 0,
+      "always_present_fields": [
+        "BusinessPartnerCategory",
+        "ExternalReference",
+        "Industry",
+        "OrganizationBPName1",
+        "WebsiteURL",
+        "to_BusinessPartnerAddress"
+      ],
+      "sometimes_missing_fields": []
+    },
+    {
+      "row_index": 1,
+      "always_present_fields": [
+        "BusinessPartnerCategory",
+        "ExternalReference",
+        "Industry",
+        "OrganizationBPName1",
+        "WebsiteURL",
+        "to_BusinessPartnerAddress"
+      ],
+      "sometimes_missing_fields": []
+    }
+  ],
+  "status": "complete"
+}

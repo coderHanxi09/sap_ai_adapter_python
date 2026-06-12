@@ -1,0 +1,31 @@
+[
+  {
+    "BusinessPartner": {
+      "BusinessPartnerCategory": "2",
+      "OrganizationBPName1": "Harbour Logistics Ltd",
+      "Industry": "Transportation",
+      "WebsiteURL": "www.harbourlogistics.co.uk",
+      "to_BusinessPartnerAddress": [
+        {
+          "Country": "GB",
+          "CityName": "London",
+          "PostalCode": "E14 5AB",
+          "StreetName": "25 Canary Wharf",
+          "to_PhoneNumber": [
+            {
+              "PhoneNumber": "+44-20-7788",
+              "IsDefaultPhoneNumber": true
+            }
+          ]
+        }
+      ],
+      "to_BusinessPartnerRole": [
+        { "BusinessPartnerRole": "FLCU01" }
+      ],
+      "ExternalReference": {
+        "SourceSystem": "SALESFORCE",
+        "SourceCustomerID": "ACC-UK-01"
+      }
+    }
+  }
+]
