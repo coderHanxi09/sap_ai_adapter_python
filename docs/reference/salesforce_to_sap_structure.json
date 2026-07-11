@@ -1,0 +1,39 @@
+{
+  "MessageHeader": {
+    "ID": "",
+    "CreationDateTime": ""
+  },
+  "JournalEntryCreateRequest": {
+    "MessageHeader": {
+      "ID": ""
+    },
+    "JournalEntry": {
+      "OriginalReferenceDocumentType": "",
+      "OriginalReferenceDocument": "",
+      "BusinessTransactionType": "",
+      "AccountingDocumentType": "",
+      "CompanyCode": "",
+      "DocumentDate": "",
+      "PostingDate": "",
+      "AccountingDocumentHeaderText": "",
+      "CreatedByUser": "",
+      "TransactionCurrency": "",
+      "Reference1InDocumentHeader": "",
+      "Reference2InDocumentHeader": "",
+      "DocumentReferenceID": "",
+      "Item": [
+        {
+          "ReferenceDocumentItem": "",
+          "GLAccount": "",
+          "AmountInTransactionCurrency": "",
+          "DebitCreditCode": "",
+          "Customer": "",
+          "AssignmentReference": "",
+          "DocumentItemText": "",
+          "ProfitCenter": "",
+          "TaxCode": ""
+        }
+      ]
+    }
+  }
+}

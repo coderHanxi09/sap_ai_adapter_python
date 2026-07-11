@@ -1,8 +1,20 @@
+import json
+
 from fastapi import FastAPI, UploadFile, File, HTTPException, Query
 from ai_mapper import map_to_sap
 from parser import parse_file
 
 app = FastAPI(title="SAP AI Adapter Service")
+
+
+def _log_block(title: str, payload) -> None:
+    """Pretty-print a labeled JSON block to stdout for live terminal viewing."""
+    try:
+        body = json.dumps(payload, indent=2, ensure_ascii=False)
+    except (TypeError, ValueError):
+        body = str(payload)
+    print(f"\n===== {title} =====", flush=True)
+    print(body, flush=True)
 
 
 # -----------------------
@@ -35,8 +47,13 @@ async def upload_file(
         # Parse file
         try:
             parsed_data = parse_file(file.filename, content)
-            print(f"=== parsed_data type={type(parsed_data)} len={len(parsed_data) if hasattr(parsed_data, '__len__') else 'N/A'} ===")
-            print(parsed_data)
+            record_in = len(parsed_data) if hasattr(parsed_data, "__len__") else "N/A"
+            print(
+                f"\n>>> UPLOAD {file.filename} | schema={target_schema} "
+                f"| source={source_system} | mode={mode} | records={record_in}",
+                flush=True,
+            )
+            _log_block("PARSED INPUT", parsed_data)
         except Exception as e:
             raise HTTPException(
                 status_code=422,
@@ -51,8 +68,7 @@ async def upload_file(
         # Map to SAP
         try:
             result = map_to_sap(parsed_data, target_schema, source_system)
-            print(f"=== result type={type(result)} ===")
-            print(result)
+            _log_block(f"MAPPING RESULT ({target_schema})", result)
         except Exception as e:
             raise HTTPException(
                 status_code=500,

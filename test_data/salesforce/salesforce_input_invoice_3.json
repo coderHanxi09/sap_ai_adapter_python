@@ -1,0 +1,44 @@
+{
+  "Invoice": {
+    "Id": "INV-2026-004789",
+    "AccountId": "0015g00000XYZ987",
+    "AccountExternalNumber": "CUST-200500",
+    "InvoiceDate": "2026-06-15",
+    "DueDate": "2026-06-30",
+    "CurrencyIsoCode": "USD",
+    "TotalAmount": 2975.0,
+    "TotalTaxAmount": 475.0,
+    "Status": "Posted",
+    "BusinessUnit": "SERVICES",
+    "CompanyCode": "2000",
+    "InvoiceLineItems": [
+      {
+        "Id": "ILI-101",
+        "Product2Id": "PROD-CONS-10",
+        "ProductCode": "CONS_PREMIUM",
+        "Description": "Premium consulting package",
+        "Quantity": 1,
+        "UnitPrice": 2000.0,
+        "LineAmount": 2000.0,
+        "TaxAmount": 380.0,
+        "RevenueGLCode": "800000",
+        "TaxCode": "A1",
+        "ProfitCenter": "SERVICES"
+      },
+      {
+        "Id": "ILI-102",
+        "Product2Id": "PROD-SUP-05",
+        "ProductCode": "SUP_GOLD",
+        "Description": "Gold support add-on",
+        "Quantity": 1,
+        "UnitPrice": 500.0,
+        "LineAmount": 500.0,
+        "TaxAmount": 95.0,
+        "RevenueGLCode": "800100",
+        "TaxCode": "A1",
+        "ProfitCenter": "SERVICES"
+      }
+    ],
+    "PaymentStatus": "Unpaid"
+  }
+}

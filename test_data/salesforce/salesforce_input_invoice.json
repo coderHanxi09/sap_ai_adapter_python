@@ -1,0 +1,31 @@
+{
+  "Invoice": {
+    "Id": "INV-2026-004567",
+    "AccountId": "0015g00000ABC123",
+    "AccountExternalNumber": "CUST-100234",
+    "InvoiceDate": "2026-05-27",
+    "DueDate": "2026-06-10",
+    "CurrencyIsoCode": "EUR",
+    "TotalAmount": 1190.0,
+    "TotalTaxAmount": 190.0,
+    "Status": "Posted",
+    "BusinessUnit": "CONSULTING",
+    "CompanyCode": "1000",
+    "InvoiceLineItems": [
+      {
+        "Id": "ILI-001",
+        "Product2Id": "PROD-SUB-01",
+        "ProductCode": "SUB_BASIC",
+        "Description": "Annual subscription BASIC",
+        "Quantity": 1,
+        "UnitPrice": 1000.0,
+        "LineAmount": 1000.0,
+        "TaxAmount": 190.0,
+        "RevenueGLCode": "800000",
+        "TaxCode": "A1",
+        "ProfitCenter": "CONSULTING"
+      }
+    ],
+    "PaymentStatus": "Unpaid"
+  }
+}

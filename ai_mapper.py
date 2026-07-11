@@ -4,7 +4,7 @@ import re
 from pathlib import Path
 from dotenv import load_dotenv
 from google import genai
-from schemas import BusinessPartnerRequestModel
+from schemas import BusinessPartnerRequestModel, JournalEntryRequestModel
 
 # -------------------------
 # Load env
@@ -19,21 +19,191 @@ client = genai.Client(
 # Schema registry
 # -------------------------
 SCHEMA_REGISTRY = {
-    "BusinessPartner": BusinessPartnerRequestModel
+    "BusinessPartner": BusinessPartnerRequestModel,
+    "JournalEntry": JournalEntryRequestModel,
 }
+
+# -------------------------
+# Salesforce Invoice -> SAP Journal Entry instructions
+# -------------------------
+def build_salesforce_invoice_instructions() -> str:
+    return """
+SOURCE SYSTEM: SALESFORCE (Invoice document)
+TARGET: SAP S/4HANA JournalEntryCreateRequest (accounting document)
+
+You receive a Salesforce Invoice object with root key "Invoice".
+Produce ONLY a valid JSON object matching the SAP JournalEntryCreateRequest target schema.
+Do not include markdown, explanations, comments, or any text outside JSON.
+
+OUTPUT SHAPE RULES:
+- The output must always be a single JSON object.
+- Do not return an array under any circumstance.
+- The root object must directly contain "MessageHeader" and "JournalEntryCreateRequest".
+
+This mapping is for the Salesforce invoice posting scenario. Therefore, SAP posting
+defaults that are fixed for this integration scenario are allowed and required.
+Do not leave a field null when a deterministic rule below is defined.
+
+HEADER / MESSAGE HEADER RULES:
+- Top-level MessageHeader.ID = "SF-" + Invoice.Id.
+- JournalEntryCreateRequest.MessageHeader.ID = "SF-" + Invoice.Id.
+- Top-level MessageHeader.CreationDateTime:
+  - Use Invoice.CreatedDate or Invoice.CreatedDateTime if present.
+  - Otherwise use Invoice.InvoiceDate + "T10:00:00Z".
+
+JOURNAL ENTRY HEADER MAPPING:
+- OriginalReferenceDocumentType = "BKPFF".
+- OriginalReferenceDocument = Invoice.Id.
+- BusinessTransactionType = "RFBU".
+- AccountingDocumentType = "DR".
+- CompanyCode = Invoice.CompanyCode.
+- DocumentDate = Invoice.InvoiceDate.
+- PostingDate = Invoice.InvoiceDate.
+- AccountingDocumentHeaderText = "SF Invoice " + Invoice.Id.
+- CreatedByUser = "IF_SALESFORCE".
+- TransactionCurrency = Invoice.CurrencyIsoCode.
+- Reference1InDocumentHeader = Invoice.AccountId.
+- Reference2InDocumentHeader = Invoice.AccountExternalNumber.
+- DocumentReferenceID = "SF-" + Invoice.Id.
+
+ITEM / LINE MAPPING:
+Build a balanced double-entry posting. The total debit amount must equal the total
+credit amount. For a standard Salesforce customer invoice, create the following lines.
+
+1. RECEIVABLE LINE, debit:
+- ReferenceDocumentItem = "1".
+- GLAccount = "140000".
+- AmountInTransactionCurrency = Invoice.TotalAmount formatted as a string with two decimals.
+- DebitCreditCode = "S".
+- Customer = Invoice.AccountExternalNumber.
+- AssignmentReference = Invoice.Id.
+- DocumentItemText = "Receivable SF Invoice".
+- ProfitCenter = Invoice.BusinessUnit if present, otherwise use the first line item's ProfitCenter.
+- TaxCode = "".
+
+2. REVENUE LINES, credit:
+For each entry in Invoice.InvoiceLineItems, create one revenue line.
+- ReferenceDocumentItem = sequential number as string, starting from "2".
+- GLAccount = lineItem.RevenueGLCode.
+- AmountInTransactionCurrency = lineItem.LineAmount formatted as a string with two decimals.
+- DebitCreditCode = "H".
+- Customer = "".
+- AssignmentReference = Invoice.Id.
+- DocumentItemText = lineItem.Description.
+- ProfitCenter = lineItem.ProfitCenter.
+- TaxCode = lineItem.TaxCode.
+
+3. TAX LINE, credit:
+If Invoice.TotalTaxAmount > 0, create one tax line after all revenue lines.
+- ReferenceDocumentItem = next sequential item number as string.
+- GLAccount = "177600".
+- AmountInTransactionCurrency = Invoice.TotalTaxAmount formatted as a string with two decimals.
+- DebitCreditCode = "H".
+- Customer = "".
+- AssignmentReference = Invoice.Id.
+- DocumentItemText:
+  - If the source input provides an explicit tax rate, set DocumentItemText to "VAT {rate}%".
+  - If no explicit tax rate is provided, set DocumentItemText to "VAT".
+  - Do not infer a 19% VAT rate only from TaxCode = "A1".
+- ProfitCenter = Invoice.BusinessUnit if present, otherwise use the first line item's ProfitCenter.
+- TaxCode should be copied from the related invoice line item when available.
+
+AMOUNT FORMATTING:
+- Output all amounts as strings with exactly two decimals.
+- Example: 1000.0 -> "1000.00"; 1190 -> "1190.00".
+
+NULL / EMPTY VALUE RULES:
+- Do not use null for fields with deterministic rules in this prompt.
+- For empty Customer fields on revenue and tax lines, use "".
+- For empty TaxCode on the receivable line, use "".
+- Use null only for optional target fields where no rule and no source value exist.
+- Do not invent values outside the rules above.
+
+EXPECTED STRUCTURE:
+{
+  "MessageHeader": {
+    "ID": "SF-<Invoice.Id>",
+    "CreationDateTime": "<timestamp>"
+  },
+  "JournalEntryCreateRequest": {
+    "MessageHeader": {
+      "ID": "SF-<Invoice.Id>"
+    },
+    "JournalEntry": {
+      "OriginalReferenceDocumentType": "BKPFF",
+      "OriginalReferenceDocument": "<Invoice.Id>",
+      "BusinessTransactionType": "RFBU",
+      "AccountingDocumentType": "DR",
+      "CompanyCode": "<Invoice.CompanyCode>",
+      "DocumentDate": "<Invoice.InvoiceDate>",
+      "PostingDate": "<Invoice.InvoiceDate>",
+      "AccountingDocumentHeaderText": "SF Invoice <Invoice.Id>",
+      "CreatedByUser": "IF_SALESFORCE",
+      "TransactionCurrency": "<Invoice.CurrencyIsoCode>",
+      "Reference1InDocumentHeader": "<Invoice.AccountId>",
+      "Reference2InDocumentHeader": "<Invoice.AccountExternalNumber>",
+      "DocumentReferenceID": "SF-<Invoice.Id>",
+      "Item": [
+        {
+          "ReferenceDocumentItem": "1",
+          "GLAccount": "140000",
+          "AmountInTransactionCurrency": "<Invoice.TotalAmount>",
+          "DebitCreditCode": "S",
+          "Customer": "<Invoice.AccountExternalNumber>",
+          "AssignmentReference": "<Invoice.Id>",
+          "DocumentItemText": "Receivable SF Invoice",
+          "ProfitCenter": "<ProfitCenter>",
+          "TaxCode": ""
+        },
+        {
+          "ReferenceDocumentItem": "2",
+          "GLAccount": "<lineItem.RevenueGLCode>",
+          "AmountInTransactionCurrency": "<lineItem.LineAmount>",
+          "DebitCreditCode": "H",
+          "Customer": "",
+          "AssignmentReference": "<Invoice.Id>",
+          "DocumentItemText": "<lineItem.Description>",
+          "ProfitCenter": "<lineItem.ProfitCenter>",
+          "TaxCode": "<lineItem.TaxCode>"
+        },
+        {
+          "ReferenceDocumentItem": "3",
+          "GLAccount": "177600",
+          "AmountInTransactionCurrency": "<Invoice.TotalTaxAmount>",
+          "DebitCreditCode": "H",
+          "Customer": "",
+          "AssignmentReference": "<Invoice.Id>",
+          "DocumentItemText": "VAT",
+          "ProfitCenter": "<ProfitCenter>",
+          "TaxCode": "<TaxCode>"
+        }
+      ]
+    }
+  }
+}
+"""
+
 
 # -------------------------
 # Source-system specific instructions
 # -------------------------
-def build_source_instructions(source_system: str) -> str:
+def build_source_instructions(source_system: str, target_schema: str = "BusinessPartner") -> str:
     """
-    Return extra mapping guidance based on the source system of the input data.
+    Return extra mapping guidance based on the source system of the input data
+    and the target schema being produced.
 
     Supported values:
-    - "salesforce": Salesforce Account / Contact CSV exports
+    - source_system "salesforce" + target "JournalEntry": Salesforce Invoice ->
+      SAP JournalEntryCreateRequest
+    - source_system "salesforce" + target "BusinessPartner": Salesforce
+      Account / Contact CSV exports
     - "crm" / "generic" / anything else: no extra instructions (current behavior)
     """
     system = (source_system or "generic").strip().lower()
+    schema = (target_schema or "BusinessPartner").strip()
+
+    if system == "salesforce" and schema == "JournalEntry":
+        return build_salesforce_invoice_instructions()
 
     if system == "salesforce":
         return """
@@ -92,6 +262,7 @@ ALLOWED INFERENCES (do not treat as hallucination):
 - Setting ExternalReference.SourceSystem = "SALESFORCE".
 - Country normalization to ISO 2-letter codes.
 
+
 NOT ALLOWED:
 - Do NOT invent tax numbers, languages, grouping codes or any other SAP
   customizing values that are not present in the source.
@@ -107,11 +278,18 @@ NOT ALLOWED:
 # -------------------------
 # Core Business Partner mapping rules
 # -------------------------
-def build_mapping_rules() -> str:
+def build_mapping_rules(target_schema: str = "BusinessPartner") -> str:
     """
     Deterministic mapping rules shared by all source systems.
     Source-specific blocks (e.g. Salesforce) may add overrides below these.
+
+    These detailed rules are Business Partner specific. For other target schemas
+    (e.g. JournalEntry) the schema-specific guidance comes from
+    build_source_instructions() instead, so return an empty block here.
     """
+    if (target_schema or "BusinessPartner").strip() != "BusinessPartner":
+        return ""
+
     return """
 DETAILED MAPPING RULES:
 
@@ -225,17 +403,17 @@ REFERENCE TARGET (Alpine Sports Retail GmbH CRM case):
 # -------------------------
 # Prompt builder (SAFE)
 # -------------------------
-def build_prompt(source: dict, schema_class, source_system: str = "generic"):
+def build_prompt(source: dict, schema_class, source_system: str = "generic", target_schema: str = "BusinessPartner"):
     schema_json = json.dumps(schema_class.model_json_schema(), indent=2)
     source_json = json.dumps(source, indent=2, ensure_ascii=False)
-    source_instructions = build_source_instructions(source_system)
+    source_instructions = build_source_instructions(source_system, target_schema)
 
     source_block = (
         f"\n\n{source_instructions}\n"
         if source_instructions
         else ""
     )
-    mapping_rules = build_mapping_rules()
+    mapping_rules = build_mapping_rules(target_schema)
 
     prompt_template = """
 You are an SAP S/4HANA data mapping engine.
@@ -311,7 +489,7 @@ def map_to_sap(source, target_schema: str, source_system: str = "generic"):
 
     def _map_single(item):
 
-        prompt = build_prompt(item, schema_class, source_system=source_system)
+        prompt = build_prompt(item, schema_class, source_system=source_system, target_schema=target_schema)
 
         response = client.models.generate_content(
             model="gemini-2.5-flash",
@@ -333,6 +511,17 @@ def map_to_sap(source, target_schema: str, source_system: str = "generic"):
                 "exception": str(e),
                 "raw_output": text
             }
+
+    # JournalEntry represents a single accounting document (JournalEntryCreateRequest).
+    # A Salesforce invoice input (whether nested JSON or a single-row flattened CSV,
+    # which the parser wraps in a list) must always map to ONE JSON object, never an
+    # array. Only fall back to a list when there are genuinely multiple invoice rows.
+    if target_schema == "JournalEntry":
+        if isinstance(source, list):
+            if len(source) == 1:
+                return _map_single(source[0])
+            return [_map_single(i) for i in source]
+        return _map_single(source)
 
     if isinstance(source, list):
         return [_map_single(i) for i in source]

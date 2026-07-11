@@ -1,0 +1,31 @@
+{
+  "Invoice": {
+    "Id": "INV-2026-005012",
+    "AccountId": "0015g00000LMN456",
+    "AccountExternalNumber": "CUST-300750",
+    "InvoiceDate": "2026-07-01",
+    "DueDate": "2026-07-20",
+    "CurrencyIsoCode": "GBP",
+    "TotalAmount": 3570,
+    "TotalTaxAmount": 570,
+    "Status": "Posted",
+    "BusinessUnit": "MARKETING",
+    "CompanyCode": "3000",
+    "InvoiceLineItems": [
+      {
+        "Id": "ILI-201",
+        "Product2Id": "PROD-LIC-20",
+        "ProductCode": "LIC_ENTERPRISE",
+        "Description": "Enterprise license annual",
+        "Quantity": 3,
+        "UnitPrice": 1000,
+        "LineAmount": 3000,
+        "TaxAmount": 570,
+        "RevenueGLCode": "810000",
+        "TaxCode": "A1",
+        "ProfitCenter": "MARKETING"
+      }
+    ],
+    "PaymentStatus": "Unpaid"
+  }
+}

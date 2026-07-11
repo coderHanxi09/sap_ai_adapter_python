@@ -1,0 +1,61 @@
+{
+  "MessageHeader": {
+    "ID": "INV-2026-004567",
+    "CreationDateTime": null
+  },
+  "JournalEntryCreateRequest": {
+    "MessageHeader": {
+      "ID": "INV-2026-004567"
+    },
+    "JournalEntry": {
+      "OriginalReferenceDocumentType": null,
+      "OriginalReferenceDocument": "INV-2026-004567",
+      "BusinessTransactionType": null,
+      "AccountingDocumentType": null,
+      "CompanyCode": "1000",
+      "DocumentDate": "2026-05-27",
+      "PostingDate": "2026-05-27",
+      "AccountingDocumentHeaderText": "INV-2026-004567",
+      "CreatedByUser": null,
+      "TransactionCurrency": "EUR",
+      "Reference1InDocumentHeader": "INV-2026-004567",
+      "Reference2InDocumentHeader": "CUST-100234",
+      "DocumentReferenceID": "INV-2026-004567",
+      "Item": [
+        {
+          "ReferenceDocumentItem": null,
+          "GLAccount": null,
+          "AmountInTransactionCurrency": "1190.00",
+          "DebitCreditCode": "S",
+          "Customer": "CUST-100234",
+          "AssignmentReference": "INV-2026-004567",
+          "DocumentItemText": "INV-2026-004567",
+          "ProfitCenter": null,
+          "TaxCode": null
+        },
+        {
+          "ReferenceDocumentItem": "ILI-001",
+          "GLAccount": "800000",
+          "AmountInTransactionCurrency": "1000.00",
+          "DebitCreditCode": "H",
+          "Customer": null,
+          "AssignmentReference": null,
+          "DocumentItemText": "Annual subscription BASIC",
+          "ProfitCenter": "CONSULTING",
+          "TaxCode": "A1"
+        },
+        {
+          "ReferenceDocumentItem": null,
+          "GLAccount": null,
+          "AmountInTransactionCurrency": "190.00",
+          "DebitCreditCode": "H",
+          "Customer": null,
+          "AssignmentReference": null,
+          "DocumentItemText": "Output tax",
+          "ProfitCenter": null,
+          "TaxCode": "A1"
+        }
+      ]
+    }
+  }
+}

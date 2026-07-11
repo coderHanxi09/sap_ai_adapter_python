@@ -121,6 +121,76 @@ class BusinessPartnerRequestModel(BaseModel):
     BusinessPartner: BusinessPartnerDataModel
 
 
+# =================================
+# SAP S/4HANA Journal Entry
+# (Salesforce Invoice -> SAP JournalEntryCreateRequest)
+# Mirrors docs/reference/salesforce_to_sap_structure.json
+# =================================
+
+# ---------------------------------
+# Journal Entry line item
+# ---------------------------------
+class JournalEntryItemModel(BaseModel):
+    ReferenceDocumentItem: Optional[str] = None
+    GLAccount: Optional[str] = None
+    AmountInTransactionCurrency: Optional[str] = None
+    DebitCreditCode: Optional[str] = None
+    Customer: Optional[str] = None
+    AssignmentReference: Optional[str] = None
+    DocumentItemText: Optional[str] = None
+    ProfitCenter: Optional[str] = None
+    TaxCode: Optional[str] = None
+
+
+# ---------------------------------
+# Journal Entry header + items
+# ---------------------------------
+class JournalEntryModel(BaseModel):
+    OriginalReferenceDocumentType: Optional[str] = None
+    OriginalReferenceDocument: Optional[str] = None
+    BusinessTransactionType: Optional[str] = None
+    AccountingDocumentType: Optional[str] = None
+    CompanyCode: Optional[str] = None
+    DocumentDate: Optional[str] = None
+    PostingDate: Optional[str] = None
+    AccountingDocumentHeaderText: Optional[str] = None
+    CreatedByUser: Optional[str] = None
+    TransactionCurrency: Optional[str] = None
+    Reference1InDocumentHeader: Optional[str] = None
+    Reference2InDocumentHeader: Optional[str] = None
+    DocumentReferenceID: Optional[str] = None
+
+    Item: Optional[List[JournalEntryItemModel]] = None
+
+
+# ---------------------------------
+# JournalEntryCreateRequest wrapper
+# ---------------------------------
+class JournalEntryCreateRequestInnerModel(BaseModel):
+    MessageHeader: Optional["JournalEntryMessageHeaderModel"] = None
+    JournalEntry: Optional[JournalEntryModel] = None
+
+
+class JournalEntryMessageHeaderModel(BaseModel):
+    ID: Optional[str] = None
+
+
+class MessageHeaderModel(BaseModel):
+    ID: Optional[str] = None
+    CreationDateTime: Optional[str] = None
+
+
+# ---------------------------------
+# Final Journal Entry request
+# ---------------------------------
+class JournalEntryRequestModel(BaseModel):
+    MessageHeader: Optional[MessageHeaderModel] = None
+    JournalEntryCreateRequest: Optional[JournalEntryCreateRequestInnerModel] = None
+
+
+JournalEntryCreateRequestInnerModel.model_rebuild()
+
+
 # ---------------------------------
 # Generic Mapping Request
 # ---------------------------------
