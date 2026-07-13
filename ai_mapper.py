@@ -1,8 +1,6 @@
 import os
 import json
 import re
-import time
-from pathlib import Path
 from dotenv import load_dotenv
 from google import genai
 from schemas import BusinessPartnerRequestModel, JournalEntryRequestModel
@@ -10,83 +8,11 @@ from schemas import BusinessPartnerRequestModel, JournalEntryRequestModel
 # -------------------------
 # Load env
 # -------------------------
-load_dotenv(Path(__file__).resolve().parent / ".env", override=True)
-
-# Free-tier models, tried in order. Override with comma-separated GEMINI_MODELS in .env.
-DEFAULT_FREE_MODELS = [
-    "gemini-3.1-flash-lite",
-    "gemini-flash-lite-latest",
-    "gemini-2.5-flash",
-    "gemini-2.5-flash-lite",
-    "gemini-2.0-flash",
-    "gemini-2.0-flash-lite",
-    "gemini-3.5-flash",
-    "gemini-flash-latest",
-]
-
-
-def _parse_model_list() -> list[str]:
-    raw = os.getenv("GEMINI_MODELS", "").strip()
-    if raw:
-        return [m.strip() for m in raw.split(",") if m.strip()]
-    pinned = os.getenv("GEMINI_MODEL", "").strip()
-    if pinned:
-        return [pinned] + [m for m in DEFAULT_FREE_MODELS if m != pinned]
-    return DEFAULT_FREE_MODELS.copy()
-
-
-FREE_MODEL_CANDIDATES = _parse_model_list()
-_last_working_model: str | None = None
+load_dotenv()
 
 client = genai.Client(
     api_key=os.getenv("GEMINI_API_KEY")
 )
-
-
-def _is_retryable_api_error(exc: Exception) -> bool:
-    msg = str(exc)
-    return any(code in msg for code in ("429", "404", "503", "UNAVAILABLE", "RESOURCE_EXHAUSTED"))
-
-
-def _generate_content_with_free_models(prompt: str) -> str:
-    """Try free-tier Gemini models in order until one succeeds."""
-    global _last_working_model
-
-    models: list[str] = []
-    if _last_working_model:
-        models.append(_last_working_model)
-    for model in FREE_MODEL_CANDIDATES:
-        if model not in models:
-            models.append(model)
-
-    last_exc: Exception | None = None
-    for idx, model in enumerate(models):
-        try:
-            response = client.models.generate_content(
-                model=model,
-                contents=prompt,
-            )
-            text = response.text
-            if not text:
-                raise ValueError(f"Empty response from model {model}")
-            if model != _last_working_model:
-                print(f"[ai_mapper] using model: {model}", flush=True)
-            _last_working_model = model
-            return text
-        except Exception as exc:
-            last_exc = exc
-            if idx < len(models) - 1 and _is_retryable_api_error(exc):
-                print(
-                    f"[ai_mapper] model {model} failed ({type(exc).__name__}); "
-                    f"trying next free model...",
-                    flush=True,
-                )
-                if "503" in str(exc):
-                    time.sleep(2)
-                continue
-            break
-
-    raise last_exc  # type: ignore[misc]
 
 # -------------------------
 # Schema registry
@@ -218,7 +144,12 @@ def map_to_sap(source, target_schema: str, source_system: str = "generic"):
 
         prompt = build_prompt(item, schema_class)
 
-        text = _generate_content_with_free_models(prompt)
+        response = client.models.generate_content(
+            model="gemini-2.5-flash",
+            contents=prompt
+        )
+
+        text = response.text
 
         try:
             result = extract_json(text)
